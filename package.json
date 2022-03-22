@@ -20,8 +20,8 @@
     "sequelize": "^6.3.4",
     "swagger-ui-express": "^4.3.0",
     "uuid": "^8.3.0",
-     "engines": {
-    "node": "12.x"
-  }
-  }
+    "engines": {
+    "node": "16.x",
+     "npm": "7.24.0"
+    }
 }
