@@ -23,14 +23,15 @@
     "uuid": "^8.3.0"
   },
   "engines": {
-    "node": "12.x"
-  },
-  "repository": {
+    "node": "16.x",
+     "npm": "7.24.0"
+   },
+"repository": {
     "type": "git",
     "url": "git+https://github.com/cypriantingiweh/Pet-care-project-api.git"
   },
-  "bugs": {
+"bugs": {
     "url": "https://github.com/cypriantingiweh/Pet-care-project-api/issues"
   },
-  "homepage": "https://github.com/cypriantingiweh/Pet-care-project-api#readme"
+"homepage": "https://github.com/cypriantingiweh/Pet-care-project-api#readme"
 }
