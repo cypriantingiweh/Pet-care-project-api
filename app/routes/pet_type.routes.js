@@ -20,11 +20,11 @@ module.exports = (app) => {
             return res.status(400).send({ error:true, message: 'Please provide a valid name'});
     
 
-        dbConn.query("INSERT INTO pet_type(type_name,created_at,updated_at) VALUES (?,?,?)", 
+        dbConn.query("INSERT INTO pet_type(type_name,created_at,updated_at) VALUES ($1,$2,$3)", 
         [type_name,created_at,updated_at], 
         function (error, results, fields) {
             if (error) throw error;
-            return res.send({ error: false, data: results, message: 'Cage successfully added' });
+            return res.send({ error: false, data: results.rows, message: 'Cage successfully added' });
         });
     });
 
@@ -34,17 +34,17 @@ module.exports = (app) => {
         let name = req.body.name;	
         let updated_at = dateTime;
     
-        dbConn.query("UPDATE pet_type SET name=?,updated_at=? WHERE id = ?", 
+        dbConn.query("UPDATE pet_type SET name=$1,updated_at=$2 WHERE id = $3", 
         [name,updated_at,id], function (error, results, fields) {
             if (error) throw error;
 
             let message = "";
-            if (results.changedRows === 0)
+            if (results.rows.length === 0)
                 message = "pet type not found or data are same";
             else
                 message = "pet type successfully updated";
 
-            return res.send({ error: false, data: results, message: message });
+            return res.send({ error: false, data: results.rows, message: message });
         });
     });
 
@@ -57,7 +57,7 @@ module.exports = (app) => {
     if (!id) {
         return res.status(400).send({ error: true, message: 'Please provide pet type id' });
     }
-        dbConn.query('DELETE FROM pet_type WHERE id = ?', [id], function (error, results, fields) {
+        dbConn.query('DELETE FROM pet_type WHERE id = $1', [id], function (error, results, fields) {
             if (error) throw error;
 
             // check data updated or not
@@ -67,7 +67,7 @@ module.exports = (app) => {
             else
                 message = "pet type successfully deleted";
 
-            return res.send({ error: false, data: results, message: message });
+            return res.send({ error: false, data: results.rows, message: message });
         });
     });
 
@@ -83,7 +83,7 @@ module.exports = (app) => {
                 message = "pet type not found";
             else
                 message = "Successfully retrived pet type data";
-            return res.send({ error: false, data: results, message: message });
+            return res.send({ error: false, data: results.rows, message: message });
         });
     });
 }

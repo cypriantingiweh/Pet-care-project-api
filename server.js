@@ -1,7 +1,8 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var mysql = require('mysql');
+var postgres = require('pg');
+const { Pool } = require("pg");
 
 const  cors = require("cors");
 
@@ -23,25 +24,20 @@ app.listen(4000, function () {
 module.exports = app;
 const dbConfig = require("./app/config/db.config.js");
 
-// db.sequelize.sync();
+async function poolDemo() {
+  const pool = new Pool(dbConfig);
+  const now = await pool.query("SELECT NOW()");
+  await pool.end();
 
-// connection configurations
-var dbConn = mysql.createConnection({
-  host: dbConfig.HOST,
-  user: dbConfig.USER,
-  password: dbConfig.PASSWORD,
-  database: dbConfig.DB,
+  return now;
+}
 
-  define: {
-    underscored: true,
-    freezeTableName: true,
-    charset: 'utf8',
-    dialectOptions: {
-      collate: 'utf8_general_ci'
-    },
-    timestamps: false
-  },
-});
+var dbConn = new postgres.Pool(dbConfig);
+
+(async () => {
+  const poolResult = await poolDemo();
+  console.log("Time with pool: " + poolResult.rows[0]["now"]);
+})();
 
 module.exports  = dbConn;
 

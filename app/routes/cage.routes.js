@@ -33,16 +33,16 @@ module.exports = (app) => {
                 return res.status(400).send({ error:true, message: 'Please provide pet type'});
     
 
-        dbConn.query("INSERT INTO cage(name,address,height,width,length,capacity,created_at,updated_at,available,pet_type_id) VALUES (?,?,?,?,?,?,?,?,?,?)", 
+        dbConn.query("INSERT INTO cage(name,address,height,width,length,capacity,created_at,updated_at,available,pet_type_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", 
         [name,address,height,width,length,capacity,created_at,updated_at,available,pet_type_id], 
         function (error, results, fields) {
             if (error) throw error;
-            return res.send({ error: false, data: results, message: 'Cage successfully added' });
+            return res.send({ error: false, data: results.rows[0], message: 'Cage successfully added' });
         });
     });
 
 
-    app.put('/api/pet/update/:id', [authJwt.verifyToken,authJwt.isSUPER], function (req, res) {
+    app.put('/api/cage/update/:id', [authJwt.verifyToken,authJwt.isSUPER], function (req, res) {
   
         let id = req.body.id;
          let  name = req.body.name;	
@@ -56,7 +56,7 @@ module.exports = (app) => {
         let available = true;
     
 
-        dbConn.query("UPDATE Pet SET name=?,wieght=?,date_of_birth=?,updated_at=?,pet_type_id=?,note=? WHERE id = ?", 
+        dbConn.query("UPDATE Pet SET name=$1,address=$2,height=$3,width=$4,length=$5,wieght=$6,date_of_birth=$7,updated_at=$8,pet_type_id=$5,note=$9 WHERE id = $10", 
          [name,address,height,width,length,capacity,updated_at,available,pet_type_id,id], function (error, results, fields) {
             if (error) throw error;
 
@@ -66,7 +66,7 @@ module.exports = (app) => {
             else
                 message = "cage successfully updated";
 
-            return res.send({ error: false, data: results, message: message });
+            return res.send({ error: false, data: results.rows[0], message: message });
         });
     });
 
@@ -78,17 +78,17 @@ module.exports = (app) => {
     if (!id) {
         return res.status(400).send({ error: true, message: 'Please provide cage id' });
     }
-        dbConn.query('DELETE FROM cage WHERE id = ?', [id], function (error, results, fields) {
+        dbConn.query('DELETE FROM cage WHERE id = $1', [id], function (error, results, fields) {
             if (error) throw error;
 
             // check data updated or not
             let message = "";
-            if (results.affectedRows === 0)
+            if (results.rows === 0)
                 message = "cage not found";
             else
                 message = "cage successfully deleted";
 
-            return res.send({ error: false, data: results, message: message });
+            return res.send({ error: false, data: results.rows, message: message });
         });
     });
 
@@ -101,19 +101,19 @@ module.exports = (app) => {
             return res.status(400).send({ error: true, message: 'Please provide pet_type_id' });
         }
     
-        dbConn.query('SELECT * FROM cage where pet_type_id=?', pet_type_id, function (error, results, fields) {
+        dbConn.query('SELECT * FROM cage where pet_type_id=$1', [pet_type_id], function (error, results, fields) {
             if (error) throw error;
             var total_available_spaces = 0;
             // check has data or not
             let message = "";
-            if (results === undefined || results.length == 0)
+            if (results.rows === undefined || results.rows.length == 0)
                 message = "cage not found";
             else
                 message = "Successfully retrived cage data";
-            results.forEach(element => {
+            results.rows.forEach(element => {
                 total_available_spaces += element.available=0 ? 0 : element.available;
             });
-            return res.send({ error: false, data: results, message: message, total_available_spaces:total_available_spaces});
+            return res.send({ error: false, data: results.rows, message: message, total_available_spaces:total_available_spaces});
         });
     });
 
@@ -126,7 +126,7 @@ module.exports = (app) => {
             return res.status(400).send({ error: true, message: 'Please provide pet_type_id' });
         }
     
-        dbConn.query('SELECT * FROM cage where pet_type_id=?', pet_type_id, function (error, results, fields) {
+        dbConn.query('SELECT * FROM cage where pet_type_id= $1', [pet_type_id], function (error, results, fields) {
             if (error) throw error;
             var total_available_spaces = 0;
             // check has data or not
@@ -135,16 +135,16 @@ module.exports = (app) => {
                 message = "cage not found";
             else
                 message = "Successfully retrived cage data";
-            results.forEach(element => {
+            results.rows.forEach(element => {
                 total_available_spaces += element.available=0 ? 0 : element.available;
             });
             var data = {
-                total_spaces:results.length,
+                total_spaces:results.rows.length,
                 total_spaces_available:total_available_spaces,
-                ocupy_spaces:results.length - total_available_spaces,
+                ocupy_spaces:results.rows.length - total_available_spaces,
                 
             }
-            return res.send({ error: false, data: data, message: message});
+            return res.send({ error: false, data: data, message: "Hello"});
         });
     });
 
@@ -157,17 +157,17 @@ module.exports = (app) => {
             return res.status(400).send({ error: true, message: 'Please provide pet_type_id' });
         }
     
-        dbConn.query('SELECT * FROM cage where pet_type_id=? && available = true', pet_type_id, function (error, results, fields) {
+        dbConn.query('SELECT * FROM cage where pet_type_id=$1 && available = true', [pet_type_id], function (error, results, fields) {
             if (error) throw error;
             var total_available_spaces = 0;
             // check has data or not
             let message = "";
-            if (results === undefined || results.length == 0)
+            if (results.rows === undefined || results.rows.length == 0)
                 message = "cage not found";
             else
                 message = "Successfully retrived cage data";
         
-            return res.send({ error: false, data: results, message: message});
+            return res.send({ error: false, data: results.rows, message: message});
         });
     });
 }

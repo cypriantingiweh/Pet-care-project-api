@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "mysql",
+    "database": "pet_db",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "mysql",
+    "database": "pet_db",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "ygqbiwkoqyiyjr",
+    "password": "14ad42f70076e985ae430d927c8ee36e531ec5dc7b70eef3f7977c51ac5b8e51",
+    "database": "d6omm6lnks4isb",
+    "host": "ec2-18-210-191-5.compute-1.amazonaws.com",
+    "dialect": "postgres"
+  }
+}

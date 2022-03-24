@@ -5,16 +5,16 @@ const ROLEs = config.ROLEs;
 checkDuplicateUserNameOrEmail = (req, res, next) => {
   // -> Check email is already in use
  
-     dbConn.query('SELECT * FROM Users where email=? && fullnames=?', [req.body.email ,req.body.fullnames], function (error, results, fields) {
+     dbConn.query("SELECT * FROM Users where email=$1 AND fullnames=$2", [req.body.email ,req.body.fullnames], function (error, results, fields) {
         if (error) throw error;
         
-        if (results === !undefined || results.length != 0){
+        if (results.rows === !undefined || results.rows.length != 0){
             res.status(400).send({message:"Pet Owner details already Exist.Go ahead to add Pet(s)",data:{
-              email: results[0].email,
-              fullnames:results[0].fullnames,
-              id: results[0].id,
-              phone: results[0].phone,
-              role: results[0].role
+              email: results.rows[0].email,
+              fullnames:results.rows[0].fullnames,
+              id: results.rows[0].id,
+              phone: results.rows[0].phone,
+              role: results.rows[0].role
             }});
             return ;
         }
@@ -25,7 +25,7 @@ checkDuplicateUserNameOrEmail = (req, res, next) => {
  checkDuplicatePetNameOrDateOFBirth = (req, res, next) => {
   // -> Check email is already in use
  
-    dbConn.query('SELECT * FROM Pet where name=?', req.body.name, function (error, results, fields) {
+    dbConn.query("SELECT * FROM Pet where name=?", req.body.name, function (error, results, fields) {
         if (error) throw error;
         
         if (results === !undefined || results.length != 0){
@@ -35,7 +35,7 @@ checkDuplicateUserNameOrEmail = (req, res, next) => {
         next();
     });
     
-    dbConn.query('SELECT * FROM Pet where date_of_birth=?', req.body.date_of_birth, function (error, results, fields) {
+    dbConn.query("SELECT * FROM Pet where date_of_birth=?", req.body.date_of_birth, function (error, results, fields) {
         if (error) throw error;
         
         if (results === !undefined || results.length != 0){
